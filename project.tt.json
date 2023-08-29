@@ -1,0 +1,13 @@
+{
+  "miniprogramRoot": "./",
+  "projectname": "datepicker",
+  "description": "基于 Taro 的交互体验良好的日期选择器",
+  "appid": "touristappid",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "postcss": false,
+    "minified": false
+  },
+  "compileType": "miniprogram"
+}
