@@ -157,8 +157,6 @@ const canShow = ref(false);
 
 // const modes = ["YMDhms", "YMDhm", "YMD", "MD", "hm"];
 
-// let beforeYear;
-// let beforeMonth;
 const resultValue = ref<number[]>([]);
 
 const date = ref(0);
@@ -230,8 +228,6 @@ const setDateByMode = () => {
   console.log('年月日', years.value, months.value, days.value)
 
   setDays(year.value, month.value, day.value, hour.value, minute.value, second.value);
-  // beforeYear = year.value;
-  // beforeMonth = month.value;
 
   const _y = years.value.findIndex(v => v === year.value)
   const _m = months.value.findIndex(v => v === month.value)
@@ -241,8 +237,6 @@ const setDateByMode = () => {
 
   value.value = [_y, _m, _d, _h, _min, second.value];
 
-  // console.log('...',value.value,year.value, month.value, day.value, hour.value, minute.value, second.value)
-  
   resultValue.value = [year.value, month.value, day.value, hour.value, minute.value, second.value];
 
   setColumns();
@@ -263,48 +257,16 @@ const setColumns = () => {
 };
 
 const setDays = (_year, _month, _day, _hour, _minute, _second) => {
-  // console.log('...',year, resultValue.value)
-  // if (year != beforeYear || beforeMonth != month) {
-  //   beforeYear = year;
-  //   beforeMonth = month;
+  const r = JSON.parse(JSON.stringify(resultValue.value))
+  const _y = years.value[r[0]]
+  const _m = months.value[r[1]]
+  const _d = days.value[r[2]]
+  const _h = hours.value[r[3]]
+  const _min = minutes.value[r[4]]
 
-    // console.log('==========')
-    // console.log(years.value, months.value, days.value)
-    // console.log(year.value)
-    // console.log(month.value)
-    // console.log(day.value)
-    // value.value = [year, month, day.value, hour.value, minute.value, second.value];
-
-    const r = JSON.parse(JSON.stringify(resultValue.value))
-    const _y = years.value[r[0]]
-    const _m = months.value[r[1]]
-    const _d = days.value[r[2]]
-    const _h = hours.value[r[3]]
-    const _min = minutes.value[r[4]]
-
-    value.value = r;
-    
-    resultValue.value = [_y, _m, _d, _h, _min, second.value];
-
-    // console.log(value.value, resultValue.value)
-    
-  // }else{
-    
-  //   // value.value = [year, month, _day, _hour, _minute, _second];
-
-  //   const _y = years.value.findIndex(v => v === year.value)
-  //   const _m = months.value.findIndex(v => v === month.value)
-  //   const _d = days.value.findIndex(v => v === day.value)
-  //   const _h = hours.value.findIndex(v => v === hour.value)
-  //   const _min = minutes.value.findIndex(v => v === minute.value)
-
-  //   value.value = [_y, _m, _d, _h, _min, second.value];
-
-    
-  //   resultValue.value = value.value;
-  // }
-  // console.log('setDays: ', value.value, resultValue.value, minute.value);
+  value.value = r;
   
+  resultValue.value = [_y, _m, _d, _h, _min, second.value];
 };
 
 watch(() => props.minDate, () => {
@@ -410,33 +372,11 @@ const bindChange = (e) => {
   }
 
   if(min_date){
-    // const timeStamp = new Date(min_date).getTime();
-
     console.log('已有起始时间',min_date,val,props.dateChecked)
-    
-    // let _year = years.value[val[0]];
-    // let _month = months.value[val[1]] - 1;
-    // let _day = days.value[val[2]];
-    // let _hour = hours.value[val[3]] || 0;
-    // let _minute = minutes.value[val[4]] || 0;
-    // let _second = seconds.value[val[5]] || 0;
-    // console.log(4455,_hour,_minute)
-    // const selectTimeStamp = new Date(_year, _month, _day, _hour, _minute, _second).getTime();
     
     if(props.dateChecked){
       emit('resetDate')
     }
-    
-    // if(timeStamp >= selectTimeStamp && !props.dateChecked) {
-    //   Taro.showToast({
-    //     title: '结束时间必须晚于起始时间',
-    //     icon: 'none',
-    //     duration: 1000
-    //   })
-    //   e.detail.value = [...value.value]
-      
-    //   return;
-    // }
   }
   
   resultValue.value = val;
@@ -503,12 +443,6 @@ watch(
   () => props.isShowDatePicker,
   () => {
     canShow.value = props.isShowDatePicker;
-    // console.log('what', canShow.value, props)
-    // if(props.minDate){
-    //   setSubDateByMode();
-    // }else{
-    //   setDateByMode();
-    // }
   },
   {
     immediate: true,
@@ -526,18 +460,6 @@ watch(
     immediate: true,
   }
 );
-
-watch(() => props.dateChecked, () => {
-  console.log('dateChecked')
-  if(!props.dateChecked){
-  //   setDateByMode();
-    console.log('重新set')
-  }
-  console.log(day.value,hour.value)
-},
-  {
-    immediate: true,
-  })
 </script>
 
 <style lang="less">
