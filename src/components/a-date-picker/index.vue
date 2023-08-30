@@ -224,7 +224,7 @@ const setDateByMode = () => {
 
   years.value = YEARS.filter(y => threeWeekDays.value.some(w => w.getFullYear() === y))
   months.value = MONTHS.filter(m => threeWeekDays.value.some(w => w.getMonth() === m - 1))
-  days.value = DAYS.filter(d => threeWeekDays.value.some(w => w.getDate() === d))
+  days.value = DAYS.filter(d => threeWeekDays.value.some(w => w.getDate() === d)).filter(w => w >= today.getDate())
   console.log('年月日', years.value, months.value, days.value)
 
   setDays(year.value, month.value, day.value, hour.value, minute.value, second.value);
@@ -284,11 +284,50 @@ const bindChange = (e) => {
   const min_date = props.minDate.replace(/\-/g, '/')
   console.log('bindChange:', val, props.minDate, min_date, value.value, resultValue.value)
   console.log('days..', days.value[val[2]], resultValue.value[2])
+
+  // 滚轮滚的是month
+  if(months.value[val[1]] !== resultValue.value[1]){
+    console.log('month 不同')
+    // 重新计算day
+    // 如果当月，则只显示大于今天的日期
+    // 如果非当月，则只显示小于等于今天的日期
+    const today = new Date()
+    let today_date = today.getTime();
+    const today_month = dateUtil.getMonth(today_date)
+
+    // 改 day
+    DAYS = []
+    console.log(today_month, months.value[val[1]]);
+
+    // 获取未来3个工作日的时间戳
+    threeWeekDays.value = getFutureThreeWeekDay()
+
+    if(today_month !== months.value[val[1]]){
+      // 非当月，则只显示小于今天的日期
+      // 获取那个月份的末尾数
+      // threeWeekDays 里的是时间戳，所以可以比较每个时间戳和当前选中的非当月的1号的时间戳！
+      const not_curr_month_timestamp = new Date(year.value, months.value[val[1]] - 1, 1).getTime();
+      threeWeekDays.value.forEach(v => {
+        v.getTime() > not_curr_month_timestamp && DAYS.push(v.getDate())
+      })
+      days.value = DAYS
+      console.log('非当月的DAYS', DAYS)
+    }else{
+      // 当月。显示大于等于今天的日期
+      threeWeekDays.value.forEach(v => {
+        // 只有当同一个月内的日期才会push
+        v.getMonth()+1 === today_month && DAYS.push(v.getDate())
+      })
+      days.value = DAYS
+      console.log('当月的DAYS', DAYS)
+    }
+  }
+
   // 滚轮滚的是day
   if(days.value[val[2]] !== resultValue.value[2]){
     console.log('day 不同')
     // 重新计算hour和minute
-    // 如果不是今天，则直接用 baseHourStart 和 baseHourEnd 如果是今天，则用当前 hour 但 end 依然是 baseHourEnd
+    // 如果非今天，则直接用 baseHourStart 和 baseHourEnd 如果是今天，则用当前 hour 但 end 依然是 baseHourEnd
     const today = new Date()
     let today_date = today.getTime();
     const today_day = dateUtil.getDay(today_date)
